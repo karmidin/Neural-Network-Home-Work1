@@ -14,8 +14,8 @@ namespace JST
         string hasilTraining,hasilTesting,printExcel;
         int alpa = 1;
         float threshold = 0.5f;
-        bool awal = true;
         float[] wakhir = new float[63];
+        int bias = 0;
         
 
         public Perceptron()
@@ -28,13 +28,22 @@ namespace JST
         {
             int countEpoch = 1;
             bool belajar = true;
+            hasilTraining += "Hasil Training\n";
+            printExcel+="Hasil Training\n";
             while (isLearn())
             {
               
                 hasilTraining += "\nEpoch Ke " + countEpoch+"\n\n";
-                hasilTraining += "Nilai Wakhir  \n";
+                hasilTraining += "Nilai Bobot Baru\n";
                 printExcel += "\nEpoch Ke " + countEpoch+"\n\n";
-                printExcel += "Nilai Wakhir  \n";
+                printExcel += "Nilai Bobot Baru\n";
+
+                for (int i = 0; i < 63; i++)
+                {
+                    printExcel = printExcel + "W" + (i + 1) + ",";
+                }
+
+                printExcel += "\n";
 
                 foreach (var item in ListPattern)
                 {
@@ -45,13 +54,7 @@ namespace JST
                         item.net = item.net + (item.x[i] * wakhir[i]);
                     }
                     
-                    if (awal == false)
-                    {
-                        item.b = 1 * item.t * alpa;
-                    }
-
-                    awal = false;
-                    item.net = item.net + item.b;
+                    item.net = item.net + bias;
 
                     
                     if (item.net > threshold)
@@ -74,15 +77,16 @@ namespace JST
                     if (item.fnet != item.t)
                     {
                         belajar = true;
+                        bias = bias + (1 * item.t * alpa);
+                       
                     }
                     else
                     {
                         belajar = false;
                     }
 
-                    Console.WriteLine(belajar);
-                    
                    
+
                     for (int i = 0; i < item.x.Length; i++)
                     {
                         if (belajar == true)
@@ -103,26 +107,26 @@ namespace JST
                         if ((i + 1) % 63 == 0)
                         {
                             
-                            hasilTraining += item.w[i]+"\n";
+                            hasilTraining += wakhir[i]+"\n";
                             
                         }
                         else
                         {
-                            hasilTraining += item.w[i];
+                            hasilTraining += wakhir[i];
                            
                         }
                         printExcel += wakhir[i]+",";
                     }
 
+                    item.b = bias;
                     printExcel += "\n";
+                   
                 }
 
                 hasilTraining += getBias();
                 hasilTraining += getNet();
                 hasilTraining += getY();
                 hasilTraining += getTarget();
-                
-             
                 
                 countEpoch++;
             }
@@ -131,32 +135,49 @@ namespace JST
 
         public string Testing() {
 
-            hasilTesting += "Nilai Wakhir  \n";
+            hasilTesting += "Hasil Testing\n";
+            hasilTesting += "\nNilai Bobot Akhir\n";
+            
+            printExcel += "\nHasil Testing\n";
+            printExcel += "\nNilai Bobot Akhir\n";
+
+            for (int i = 0; i < 63; i++)
+            {
+                printExcel = printExcel + "W" + (i + 1) + ",";
+            }
+
+            printExcel += "\n";
 
             foreach (var item in ListPattern)
             {
                 for (int i = 0; i < item.x.Length; i++)
                 {
-
-                    if ((i + 1) % 63 == 0)
-                    {
-
-                        hasilTesting += wakhir[i] + "\n";
-                    }
-                    else
-                    {
-
-                        hasilTesting += wakhir[i];
-                    }
-
                     item.net = item.net + (item.x[i] * wakhir[i]);
+                }
 
+                item.net = item.net + bias;
+               
+            }
+
+            
+
+            for (int i = 0; i < 63; i++)
+            {
+                if ((i + 1) % 63 == 0)
+                {
+
+                    hasilTesting += wakhir[i] + "\n";
+                    printExcel += wakhir[i] + "\n";
+                }
+                else
+                {
+
+                    hasilTesting += wakhir[i];
+                    printExcel += wakhir[i] + ",";
                 }
             }
 
-            printExcel += "\nHasil Testing\n";
-
-            hasilTesting += getBias();
+            hasilTesting += getBiasAkhir();
             hasilTesting += getNet();
             hasilTesting += getY();
             hasilTesting += getTarget();
@@ -170,8 +191,8 @@ namespace JST
             hasilTesting = "";
             hasilTraining = "";
             printExcel = "";
+            bias = 0;
             ListPattern.Clear();
-            awal = true;
             wakhir = new float[63];
         }
 
@@ -197,23 +218,31 @@ namespace JST
                 //Menampilkan nilai Net tiap pattern
 
                 net = net + "Pattern " + (i + 1) + " : " + ListPattern[i].net + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].net + "\n";
+                printExcel = printExcel + "Pattern, " + (i + 1) + " :, " + ListPattern[i].net + "\n";
             }
             return net;
         }
         public string getBias()
         {
             string bias = "";
-            bias = bias + "\nNilai Bias tiap Patern\n";
+            bias = bias + "\nNilai Bias Baru tiap Patern\n";
             printExcel = printExcel + "\nNilai Bias tiap Pattern\n";
             for (int i = 0; i < 6; i++)
             {
                 //Menampilkan nilai Bias tiap pattern
 
                 bias = bias+ "Pattern " + (i + 1) + " : " + ListPattern[i].b + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].b + "\n";
+                printExcel = printExcel + "Pattern, " + (i + 1) + " :, " + ListPattern[i].b + "\n";
             }
             return bias;
+        }
+
+        public string getBiasAkhir()
+        {
+            string biasAkhir = "";
+            biasAkhir = biasAkhir + "\nNilai Bias Akhir : " + bias.ToString()+"\n" ;
+            printExcel = printExcel + "\nBias Akhir," + bias+"\n";
+            return biasAkhir;
         }
 
         public string getY() {
@@ -225,7 +254,7 @@ namespace JST
                 //Menampilkan nilai y tiap pattern
 
                 y = y + "Pattern " + (i + 1) + " : " + ListPattern[i].fnet + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].fnet + "\n";
+                printExcel = printExcel + "Pattern, " + (i + 1) + " :, " + ListPattern[i].fnet + "\n";
             }
             return y;
         }
@@ -240,7 +269,7 @@ namespace JST
                 //Menampilkan nilai target tiap pattern
 
                 y = y + "Pattern " + (i + 1) + " : " + ListPattern[i].t + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].t + "\n";
+                printExcel = printExcel + "Pattern, " + (i + 1) + " :, " + ListPattern[i].t + "\n";
             }
             return y;
         }
