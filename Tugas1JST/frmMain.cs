@@ -52,6 +52,7 @@ namespace Tugas1JST
         {
             rtbTraining.Text = rtbTraining.Text + pct.Training();
             btnTraining.Enabled = false;
+            btnTesting.Enabled = true;
         }
 
         private void btnTesting_Click(object sender, EventArgs e)
@@ -152,7 +153,7 @@ namespace Tugas1JST
 
         private void modeTestTrain()
         {
-            btnTesting.Enabled = true;
+            btnTesting.Enabled = false;
             btnTraining.Enabled = true;
             btnPrint.Enabled = true;
             btnReset.Enabled = true;
