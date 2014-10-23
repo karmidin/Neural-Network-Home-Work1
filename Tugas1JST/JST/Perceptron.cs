@@ -77,6 +77,15 @@ namespace JST
                     }
                     printExcel.Append("\n");
                 }
+
+                //menulis detail hasil tiap epoch
+                printExcel.Append(",Bobot bias, Net, FNet, Target\n");
+                hasilTraining.Append(",Bobot bias, Net, FNet, Target\n");
+                for (int i = 0; i < 6; i++)
+                {
+                    printExcel.Append(String.Format("Pattern {0}:,{1},{2},{3},{4}\n", i+1, ListPattern[i].b, 
+                        ListPattern[i].net, ListPattern[i].fnet, ListPattern[i].t));
+                }
                 countEpoch++;
             }
             return hasilTraining.ToString();
@@ -98,10 +107,10 @@ namespace JST
             float deltaWBias = 1 * item.t * alpha;
             if (!isLearn)
                 deltaWBias = 0;
-            bias = bias + deltaWBias; //menghitung perubahan bobot bias
+            item.b = bias = bias + deltaWBias; //menghitung perubahan bobot bias
 
             delta += deltaWBias + ",";
-            bobotAkhir += item.b + ",";
+            bobotAkhir += bias + ",";
             printExcel.Append(delta + bobotAkhir);
         }
 

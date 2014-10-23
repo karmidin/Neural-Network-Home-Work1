@@ -135,8 +135,8 @@ namespace Tugas1JST
         private void PrintToExcel(string name)
         {
 
-            FileStream fs1 = new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write);
-            StreamWriter writer = new StreamWriter(fs1);
+            //FileStream fs1 = new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(name);
             writer.Write(pct.getPrintToExcel());
             writer.Close();
         }
