@@ -23,7 +23,6 @@ namespace Tugas1JST
             InitializeComponent();
             modeInputPattern();
             addTargetLabel();
-           
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -56,8 +55,11 @@ namespace Tugas1JST
 
         private void btnTesting_Click(object sender, EventArgs e)
         {
-            rtbTesting.Text = rtbTesting.Text + pct.Testing();
-            btnTesting.Enabled = false;
+            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                rtbTesting.Text = pct.Testing(openFileDialog2.FileName);
+                //btnTesting.Enabled = false;
+            }
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -76,19 +78,23 @@ namespace Tugas1JST
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-            if (rtbTesting.Text != "" || rtbTraining.Text != "")
-            {
+            //if (rtbTesting.Text != "" || rtbTraining.Text != "")
+            //{
                
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    PrintToExcel(saveFileDialog1.FileName);
-                }
-            }
-            else
-            {
-                MessageBox.Show("There are no results to be printed", "Alert",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            //    {
+            //        PrintToExcel(saveFileDialog1.FileName);
+            //        System.Diagnostics.Process.Start(@"Tugas1JST.csv");
+            //    }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("There are no results to be printed", "Alert",
+            //    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+
+            PrintToExcel(@"Tugas1JST.csv");
+            System.Diagnostics.Process.Start(@"Tugas1JST.csv");
         }
 
         

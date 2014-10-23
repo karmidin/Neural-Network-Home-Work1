@@ -40,6 +40,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // rtbTraining
@@ -141,6 +142,10 @@
             this.label2.TabIndex = 15;
             this.label2.Text = "Testing Process:";
             // 
+            // openFileDialog2
+            // 
+            this.openFileDialog2.FileName = "openFileDialog2";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -178,5 +183,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.OpenFileDialog openFileDialog2;
     }
 }

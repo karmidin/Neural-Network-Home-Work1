@@ -15,6 +15,7 @@ namespace JST
         public float[] w, wakhir;           // wakhir adalah hasil penjumlahan Δw
                                             //w adalah perubahan bobot merupakan hasil x * alpha * target 
         public float[] x;                   //x adalah input tiap pattern
+        public string stringPattern;
 
         public Pattern(int t, string pattern_filename)
         {
@@ -23,6 +24,7 @@ namespace JST
             x = new float[63];
             this.t = t;
             b = 0;
+            stringPattern = "";
             ReadPattern(pattern_filename);
         }
 
@@ -35,7 +37,9 @@ namespace JST
                     int i = 0;
                     while (!sr.EndOfStream)
                     {
-                        char[] pattern = sr.ReadLine().ToArray();
+                        string line = sr.ReadLine();
+                        stringPattern += line + "\n";
+                        char[] pattern = line.ToArray();
                         foreach (char item in pattern)
                         {
                             if (item == '-')

@@ -34,7 +34,7 @@ namespace JST
             {
               
                 hasilTraining.Append("\nEpoch Ke " + countEpoch+"\n\n");
-                hasilTraining.Append("Nilai Wakhir  \n");
+                //hasilTraining.Append("Nilai Wakhir  \n");
                 printExcel.Append("\nEpoch Ke " + countEpoch+"\n");
                 printExcel.Append(PrintBobotAwal() + "\n");
                 //printExcel.Append("Nilai Wakhir  \n");
@@ -80,12 +80,20 @@ namespace JST
 
                 //menulis detail hasil tiap epoch
                 printExcel.Append(",Bobot bias, Net, FNet, Target\n");
-                hasilTraining.Append(",Bobot bias, Net, FNet, Target\n");
+                string bobotbias = "Nilai bobot Bias tiap Pattern \n";
+                string net = "Nilai Net tiap Pattern\n";
+                string fnet = "Nilai FNet tiap Pattern\n";
+                string target = "Nilai Target tiap Pattern\n";
                 for (int i = 0; i < 6; i++)
                 {
                     printExcel.Append(String.Format("Pattern {0}:,{1},{2},{3},{4}\n", i+1, ListPattern[i].b, 
                         ListPattern[i].net, ListPattern[i].fnet, ListPattern[i].t));
+                    bobotbias += String.Format("Pattern {0}: {1}\n", i+1, ListPattern[i].b);
+                    net += String.Format("Pattern {0}: {1}\n", i + 1, ListPattern[i].net);
+                    fnet += String.Format("Pattern {0}: {1}\n", i + 1, ListPattern[i].fnet);
+                    target += String.Format("Pattern {0}: {1}\n", i + 1, ListPattern[i].t);
                 }
+                hasilTraining.Append(bobotbias + "\n" + net + "\n" + fnet + "\n" + target);
                 countEpoch++;
             }
             return hasilTraining.ToString();
@@ -150,39 +158,66 @@ namespace JST
             return sb.ToString();
         }
 
-        public string Testing() {
+        public string Testing(string filename) {
 
+            Pattern testingItem = new Pattern(0, filename);
+            hasilTesting.Append(testingItem.stringPattern + "\n");
             hasilTesting.Append("Nilai Wakhir  \n");
-
-            foreach (var item in ListPattern)
+            for (int i = 0; i < testingItem.x.Length; i++)
             {
-                for (int i = 0; i < item.x.Length; i++)
-                {
 
-                    if ((i + 1) % 63 == 0)
-                    {
+                hasilTesting.Append(wakhir[i] + ", ");
+                testingItem.net = testingItem.net + (testingItem.x[i] * wakhir[i]);
+            }
+            testingItem.net += bias;
+            hasilTesting.Append(String.Format("\nNilai Net : {0}\n", testingItem.net));
+            string result = "Bukan pattern untuk huruf A";
 
-                        hasilTesting.Append(wakhir[i] + "\n");
-                    }
-                    else
-                    {
-
-                        hasilTesting.Append(wakhir[i]);
-                    }
-
-                    item.net = item.net + (item.x[i] * wakhir[i]);
-
-                }
+            if (testingItem.net > threshold)
+            {
+                testingItem.fnet = 1;
+                result = "Pattern untuk huruf A";
+            }
+            else if (testingItem.net >= 0 && testingItem.net <= threshold)
+            {
+                testingItem.fnet = 0;
+            }
+            else
+            {
+                testingItem.fnet = -1;
             }
 
-            printExcel.Append("\nHasil Testing\n");
+            hasilTesting.Append(String.Format("\nNilai FNet : {0}\n", testingItem.fnet));
+            hasilTesting.Append(result + "\n");
+            hasilTesting.Append("--------------------------------------------------------------------------\n\n");
 
-            hasilTesting.Append(getBias());
-            hasilTesting.Append(getNet());
-            hasilTesting.Append(getY());
-            hasilTesting.Append(getTarget());
-          
+            //foreach (var item in ListPattern)
+            //{
+            //    for (int i = 0; i < item.x.Length; i++)
+            //    {
 
+            //        if ((i + 1) % 63 == 0)
+            //        {
+
+            //            hasilTesting.Append(wakhir[i] + "\n");
+            //        }
+            //        else
+            //        {
+
+            //            hasilTesting.Append(wakhir[i]);
+            //        }
+
+            //        item.net = item.net + (item.x[i] * wakhir[i]);
+
+            //    }
+            //}
+
+            //printExcel.Append("\nHasil Testing\n");
+
+            //hasilTesting.Append(getBias());
+            //hasilTesting.Append(getNet());
+            //hasilTesting.Append(getY());
+            //hasilTesting.Append(getTarget());
 
             return hasilTesting.ToString();
         }
