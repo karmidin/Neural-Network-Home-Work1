@@ -11,7 +11,7 @@ namespace JST
         public List<Pattern> ListPattern = new List<Pattern>();
       
 
-        string hasilTraining,hasilTesting,printExcel;
+        StringBuilder hasilTraining,hasilTesting,printExcel;
         int alpa = 1;
         float threshold = 0.5f;
         bool awal = true;
@@ -21,7 +21,9 @@ namespace JST
         public Perceptron()
         {
             ListPattern = new List<Pattern>();
-
+            hasilTesting = new StringBuilder();
+            hasilTraining = new StringBuilder();
+            printExcel = new StringBuilder();
         }
 
         public string Training()
@@ -31,53 +33,45 @@ namespace JST
             while (isLearn())
             {
               
-                hasilTraining += "\nEpoch Ke " + countEpoch+"\n\n";
-                hasilTraining += "Nilai Wakhir  \n";
-                printExcel += "\nEpoch Ke " + countEpoch+"\n\n";
-                printExcel += "Nilai Wakhir  \n";
+                hasilTraining.Append("\nEpoch Ke " + countEpoch+"\n\n");
+                hasilTraining.Append("Nilai Wakhir  \n");
+                printExcel.Append("\nEpoch Ke " + countEpoch+"\n\n");
+                printExcel.Append("Nilai Wakhir  \n");
 
                 foreach (var item in ListPattern)
                 {
-                   
+                    //menghitung nilai net
                     for (int i = 0; i < item.x.Length; i++)
                     {
-                        
                         item.net = item.net + (item.x[i] * wakhir[i]);
                     }
-                    
-                    if (awal == false)
-                    {
-                        item.b = 1 * item.t * alpa;
-                    }
-
-                    awal = false;
+                    // menambahkan f.net dengan nilai w bobot bias
                     item.net = item.net + item.b;
 
-                    
+                    //menghitung nilai y atau f(net)
                     if (item.net > threshold)
                     {
                         item.fnet = 1;
-
                     }
                     else if (item.net >= 0 && item.net <= threshold)
                     {
                         item.fnet = 0;
-
                     }
                     else
                     {
                         item.fnet = -1;
-
                     }
 
 
                     if (item.fnet != item.t)
                     {
                         belajar = true;
+                        HitungPerubahanBobot(item, alpa);
                     }
                     else
                     {
                         belajar = false;
+                        HitungPerubahanBobot(item, alpa, false);
                     }
 
                     Console.WriteLine(belajar);
@@ -88,11 +82,8 @@ namespace JST
                         if (belajar == true)
                         {
                             //menghitung nilai perubahan bobot tiap inputan
-
                             item.w[i] = item.x[i] * item.t * alpa;
                             wakhir[i] = item.w[i] + wakhir[i];
-
-                           
                         }
                         else
                         {
@@ -102,36 +93,56 @@ namespace JST
 
                         if ((i + 1) % 63 == 0)
                         {
-                            
-                            hasilTraining += item.w[i]+"\n";
-                            
+                            hasilTraining.Append(item.w[i]+"\n");
                         }
                         else
                         {
-                            hasilTraining += item.w[i];
-                           
+                            hasilTraining.Append(item.w[i]);
                         }
-                        printExcel += wakhir[i]+",";
+                        printExcel.Append(wakhir[i]+",");
                     }
 
-                    printExcel += "\n";
+                    printExcel.Append("\n");
                 }
 
-                hasilTraining += getBias();
-                hasilTraining += getNet();
-                hasilTraining += getY();
-                hasilTraining += getTarget();
+                hasilTraining.Append(getBias());
+                hasilTraining.Append(getNet());
+                hasilTraining.Append(getY());
+                hasilTraining.Append(getTarget());
                 
              
                 
                 countEpoch++;
             }
-            return hasilTraining;
+            return hasilTraining.ToString();
+        }
+
+        public void HitungPerubahanBobot(Pattern item, float alpha/*, StringBuilder sb*/ , bool isLearn = true)
+        {
+            string delta = "";
+            string bobotAkhir = "";
+            for (int i = 0; i < item.x.Length; i++)
+            {
+                float deltaW = item.x[i] * item.t * alpha;
+                if (!isLearn)
+                    deltaW = 0;
+                wakhir[i] = wakhir[i] + deltaW;
+                delta += deltaW + ",";
+                bobotAkhir += wakhir[i] + ",";
+            }
+            float deltaWBias = 1 * item.t * alpha;
+            if (!isLearn)
+                deltaWBias = 0;
+            item.b = item.b + deltaWBias; //menghitung perubahan bobot bias
+
+            delta += deltaWBias + ",";
+            bobotAkhir += item.b + ",";
+            //sb.Append(delta + bobotAkhir);
         }
 
         public string Testing() {
 
-            hasilTesting += "Nilai Wakhir  \n";
+            hasilTesting.Append("Nilai Wakhir  \n");
 
             foreach (var item in ListPattern)
             {
@@ -141,12 +152,12 @@ namespace JST
                     if ((i + 1) % 63 == 0)
                     {
 
-                        hasilTesting += wakhir[i] + "\n";
+                        hasilTesting.Append(wakhir[i] + "\n");
                     }
                     else
                     {
 
-                        hasilTesting += wakhir[i];
+                        hasilTesting.Append(wakhir[i]);
                     }
 
                     item.net = item.net + (item.x[i] * wakhir[i]);
@@ -154,22 +165,22 @@ namespace JST
                 }
             }
 
-            printExcel += "\nHasil Testing\n";
+            printExcel.Append("\nHasil Testing\n");
 
-            hasilTesting += getBias();
-            hasilTesting += getNet();
-            hasilTesting += getY();
-            hasilTesting += getTarget();
+            hasilTesting.Append(getBias());
+            hasilTesting.Append(getNet());
+            hasilTesting.Append(getY());
+            hasilTesting.Append(getTarget());
           
 
 
-            return hasilTesting;
+            return hasilTesting.ToString();
         }
 
         public void Reset() {
-            hasilTesting = "";
-            hasilTraining = "";
-            printExcel = "";
+            hasilTesting.Clear();
+            hasilTraining.Clear();
+            printExcel.Clear();
             ListPattern.Clear();
             awal = true;
             wakhir = new float[63];
@@ -191,13 +202,13 @@ namespace JST
         {
             string net = "";
             net = net + "\nNilai Net tiap Patern\n";
-            printExcel = printExcel + "\nNilai Net tiap Pattern\n";
+            printExcel.Append("\nNilai Net tiap Pattern\n");
             for (int i = 0; i < 6; i++)
             {
                 //Menampilkan nilai Net tiap pattern
 
                 net = net + "Pattern " + (i + 1) + " : " + ListPattern[i].net + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].net + "\n";
+                printExcel.Append("Pattern " + (i + 1) + " : " + ListPattern[i].net + "\n");
             }
             return net;
         }
@@ -205,13 +216,13 @@ namespace JST
         {
             string bias = "";
             bias = bias + "\nNilai Bias tiap Patern\n";
-            printExcel = printExcel + "\nNilai Bias tiap Pattern\n";
+            printExcel.Append("\nNilai Bias tiap Pattern\n");
             for (int i = 0; i < 6; i++)
             {
                 //Menampilkan nilai Bias tiap pattern
 
                 bias = bias+ "Pattern " + (i + 1) + " : " + ListPattern[i].b + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].b + "\n";
+                printExcel.Append("Pattern " + (i + 1) + " : " + ListPattern[i].b + "\n");
             }
             return bias;
         }
@@ -219,13 +230,13 @@ namespace JST
         public string getY() {
             string y = "";
             y = y + "\nNilai Y tiap Patern\n";
-            printExcel = printExcel + "\nNilai Fnet tiap Pattern\n";
+            printExcel.Append("\nNilai Fnet tiap Pattern\n");
             for (int i = 0; i < 6; i++)
             {
                 //Menampilkan nilai y tiap pattern
 
                 y = y + "Pattern " + (i + 1) + " : " + ListPattern[i].fnet + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].fnet + "\n";
+                printExcel.Append("Pattern " + (i + 1) + " : " + ListPattern[i].fnet + "\n");
             }
             return y;
         }
@@ -234,13 +245,13 @@ namespace JST
         {
             string y = "";
             y = y + "\nNilai Target tiap Patern\n";
-            printExcel = printExcel + "\nNilai Target tiap Pattern\n";
+            printExcel.Append(printExcel + "\nNilai Target tiap Pattern\n");
             for (int i = 0; i < 6; i++)
             {
                 //Menampilkan nilai target tiap pattern
 
                 y = y + "Pattern " + (i + 1) + " : " + ListPattern[i].t + "\n";
-                printExcel = printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].t + "\n";
+                printExcel.Append(printExcel + "Pattern " + (i + 1) + " : " + ListPattern[i].t + "\n");
             }
             return y;
         }
@@ -261,8 +272,10 @@ namespace JST
                 }
                 input += "\n";
             }
-            printExcel = input + printExcel;
-            return printExcel;
+            string print = printExcel.ToString();
+            printExcel.Clear();
+            printExcel.Append(input + print);
+            return printExcel.ToString();
         }
 
        

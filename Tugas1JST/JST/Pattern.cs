@@ -15,7 +15,6 @@ namespace JST
         public float[] w, wakhir;           // wakhir adalah hasil penjumlahan Δw
                                             //w adalah perubahan bobot merupakan hasil x * alpha * target 
         public float[] x;                   //x adalah input tiap pattern
-        public float alpa;
 
         public Pattern(int t, string pattern_filename)
         {
