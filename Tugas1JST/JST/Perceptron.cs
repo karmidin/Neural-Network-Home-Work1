@@ -73,45 +73,7 @@ namespace JST
                         belajar = false;
                         HitungPerubahanBobot(item, alpa, false);
                     }
-
-                    Console.WriteLine(belajar);
-                    
-                   
-                    for (int i = 0; i < item.x.Length; i++)
-                    {
-                        if (belajar == true)
-                        {
-                            //menghitung nilai perubahan bobot tiap inputan
-                            item.w[i] = item.x[i] * item.t * alpa;
-                            wakhir[i] = item.w[i] + wakhir[i];
-                        }
-                        else
-                        {
-                            //jika sesuai output sesuai target, nilai perubahan bobot = 0 karena tidak melakukan pembelajaran
-                            item.w[i] = 0;
-                        }
-
-                        if ((i + 1) % 63 == 0)
-                        {
-                            hasilTraining.Append(item.w[i]+"\n");
-                        }
-                        else
-                        {
-                            hasilTraining.Append(item.w[i]);
-                        }
-                        printExcel.Append(wakhir[i]+",");
-                    }
-
-                    printExcel.Append("\n");
                 }
-
-                hasilTraining.Append(getBias());
-                hasilTraining.Append(getNet());
-                hasilTraining.Append(getY());
-                hasilTraining.Append(getTarget());
-                
-             
-                
                 countEpoch++;
             }
             return hasilTraining.ToString();
