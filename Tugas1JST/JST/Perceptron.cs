@@ -14,7 +14,7 @@ namespace JST
         StringBuilder hasilTraining,hasilTesting,printExcel;
         int alpa = 1;
         float threshold = 0.5f;
-        bool awal = true;
+        float bias = 0;
         float[] wakhir = new float[63];
         
 
@@ -29,24 +29,28 @@ namespace JST
         public string Training()
         {
             int countEpoch = 1;
-            bool belajar = true;
+            printExcel.Append(SetHeaderTable());
             while (isLearn())
             {
               
                 hasilTraining.Append("\nEpoch Ke " + countEpoch+"\n\n");
                 hasilTraining.Append("Nilai Wakhir  \n");
-                printExcel.Append("\nEpoch Ke " + countEpoch+"\n\n");
-                printExcel.Append("Nilai Wakhir  \n");
+                printExcel.Append("\nEpoch Ke " + countEpoch+"\n");
+                printExcel.Append(PrintBobotAwal() + "\n");
+                //printExcel.Append("Nilai Wakhir  \n");
 
                 foreach (var item in ListPattern)
                 {
                     //menghitung nilai net
+                    item.net = 0;
                     for (int i = 0; i < item.x.Length; i++)
                     {
                         item.net = item.net + (item.x[i] * wakhir[i]);
+                        printExcel.Append(item.x[i] + ",");
                     }
                     // menambahkan f.net dengan nilai w bobot bias
-                    item.net = item.net + item.b;
+                    item.net = item.net + bias;
+                    printExcel.Append(1 + "," + item.t + "," + item.net + ",");
 
                     //menghitung nilai y atau f(net)
                     if (item.net > threshold)
@@ -61,25 +65,24 @@ namespace JST
                     {
                         item.fnet = -1;
                     }
-
+                    printExcel.Append(item.fnet + ",");
 
                     if (item.fnet != item.t)
                     {
-                        belajar = true;
                         HitungPerubahanBobot(item, alpa);
                     }
                     else
                     {
-                        belajar = false;
                         HitungPerubahanBobot(item, alpa, false);
                     }
+                    printExcel.Append("\n");
                 }
                 countEpoch++;
             }
             return hasilTraining.ToString();
         }
 
-        public void HitungPerubahanBobot(Pattern item, float alpha/*, StringBuilder sb*/ , bool isLearn = true)
+        public void HitungPerubahanBobot(Pattern item, float alpha, bool isLearn = true)
         {
             string delta = "";
             string bobotAkhir = "";
@@ -95,11 +98,47 @@ namespace JST
             float deltaWBias = 1 * item.t * alpha;
             if (!isLearn)
                 deltaWBias = 0;
-            item.b = item.b + deltaWBias; //menghitung perubahan bobot bias
+            bias = bias + deltaWBias; //menghitung perubahan bobot bias
 
             delta += deltaWBias + ",";
             bobotAkhir += item.b + ",";
-            //sb.Append(delta + bobotAkhir);
+            printExcel.Append(delta + bobotAkhir);
+        }
+
+        public string SetHeaderTable()
+        {
+            string item = "";
+            string deltaW = "";
+            string newW = "";
+            for (int i = 1; i <= 63; i++)
+            {
+                item += "x" + i + ",";
+                deltaW += "dw" + i + ",";
+                newW += "w" + i + ",";
+            }
+            item += 1 + ",";
+            deltaW += "db,";
+            newW += "b,";
+            return (item + "t,net,y=f(net)," + deltaW + newW);
+        }
+
+        public string PrintBobotAwal()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 63; j++)
+                {
+                    sb.Append(",");
+                }
+            }
+            sb.Append(",,,,,");
+            for(int k = 0; k < wakhir.Length; k++)
+            {
+                sb.Append(wakhir[k] + ",");
+            }
+            sb.Append(bias);
+            return sb.ToString();
         }
 
         public string Testing() {
@@ -144,7 +183,6 @@ namespace JST
             hasilTraining.Clear();
             printExcel.Clear();
             ListPattern.Clear();
-            awal = true;
             wakhir = new float[63];
         }
 
@@ -219,24 +257,24 @@ namespace JST
         }
 
         public string getPrintToExcel() {
-            string input="";
-            for (int i = 0; i < 63; i++)
-            {
-                input = input + "X"+(i+1) + ",";
-            }
-            input += "\n";
-            foreach (var item in ListPattern)
-            {
+            //string input="";
+            //for (int i = 0; i < 63; i++)
+            //{
+            //    input = input + "X"+(i+1) + ",";
+            //}
+            //input += "\n";
+            //foreach (var item in ListPattern)
+            //{
 
-                for (int i = 0; i < item.x.Length; i++)
-                {
-                    input = input + item.x[i]+",";
-                }
-                input += "\n";
-            }
-            string print = printExcel.ToString();
-            printExcel.Clear();
-            printExcel.Append(input + print);
+            //    for (int i = 0; i < item.x.Length; i++)
+            //    {
+            //        input = input + item.x[i]+",";
+            //    }
+            //    input += "\n";
+            //}
+            //string print = printExcel.ToString();
+            //printExcel.Clear();
+            //printExcel.Append(input + print);
             return printExcel.ToString();
         }
 
