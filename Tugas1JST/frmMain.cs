@@ -92,9 +92,11 @@ namespace Tugas1JST
             //    MessageBox.Show("There are no results to be printed", "Alert",
             //    MessageBoxButtons.OK, MessageBoxIcon.Error);
             //}
-
-            PrintToExcel(@"Tugas1JST.csv");
-            System.Diagnostics.Process.Start(@"Tugas1JST.csv");
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                PrintToExcel(saveFileDialog1.FileName);
+                System.Diagnostics.Process.Start(saveFileDialog1.FileName);
+            }
         }
 
         
