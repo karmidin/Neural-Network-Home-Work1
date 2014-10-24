@@ -16,6 +16,8 @@ namespace Tugas1JST
     {
         Perceptron pct;
         Label[] lblGambarPattern;
+        bool print = true;
+        System.Diagnostics.Process proc;
 
         public frmMain()
         {
@@ -23,6 +25,12 @@ namespace Tugas1JST
             InitializeComponent();
             modeInputPattern();
             addTargetLabel();
+
+            proc = new System.Diagnostics.Process();
+            proc.EnableRaisingEvents = false;
+
+            saveFileDialog1.Filter = "csv files (*.csv)|*.csv";
+            saveFileDialog1.FilterIndex = 1;
            
         }
 
@@ -70,19 +78,22 @@ namespace Tugas1JST
                 lblGambarPattern[i].Text = "";
             }
             modeInputPattern();
-
+            print = true;
         }
 
        
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+
             if (rtbTesting.Text != "" || rtbTraining.Text != "")
             {
                
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     PrintToExcel(saveFileDialog1.FileName);
+                    proc.StartInfo.FileName = saveFileDialog1.FileName;
+                    proc.Start();
                 }
             }
             else
@@ -135,11 +146,11 @@ namespace Tugas1JST
 
         private void PrintToExcel(string name)
         {
-
             FileStream fs1 = new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write);
             StreamWriter writer = new StreamWriter(fs1);
-            writer.Write(pct.getPrintToExcel());
+            writer.Write(pct.getPrintToExcel(print));
             writer.Close();
+            print=false;
         }
 
         private void modeInputPattern()
