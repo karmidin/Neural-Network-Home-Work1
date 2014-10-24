@@ -63,7 +63,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Text files (*.txt)|*.txt";
             // 
             // btnBrowse
             // 
@@ -115,6 +115,10 @@
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "csv files (*.csv)|*.csv";
+            // 
             // groupBox1
             // 
             this.groupBox1.Location = new System.Drawing.Point(170, 16);
@@ -144,7 +148,7 @@
             // 
             // openFileDialog2
             // 
-            this.openFileDialog2.FileName = "openFileDialog2";
+            this.openFileDialog2.Filter = "Text files (*.txt)|*.txt";
             // 
             // frmMain
             // 

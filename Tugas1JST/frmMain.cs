@@ -27,23 +27,41 @@ namespace Tugas1JST
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 6; i++)
-            {
+            //for (int i = 0; i < 6; i++)
+            //{
+                openFileDialog1.Multiselect = true;
                 DialogResult result = openFileDialog1.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    if (openFileDialog1.SafeFileName == "pattern1.txt" || openFileDialog1.SafeFileName == "pattern4.txt")
+                    try
                     {
-                        pct.ListPattern.Add(new Pattern(1, openFileDialog1.FileName));
-                    }
-                    else
-                    {
-                        pct.ListPattern.Add(new Pattern(-1, openFileDialog1.FileName));
-                    }
+                        for (int i = 0; i < openFileDialog1.FileNames.Length; i++)
+                        {
+                            if (openFileDialog1.SafeFileNames[i] == "pattern1.txt" || openFileDialog1.SafeFileNames[i] == "pattern4.txt")
+                            {
+                                pct.ListPattern.Add(new Pattern(1, openFileDialog1.FileNames[i]));
+                            }
+                            else
+                            {
+                                pct.ListPattern.Add(new Pattern(-1, openFileDialog1.FileNames[i]));
+                            }
 
-                    inputPattern(i);
+                            inputPattern(i);
+                        }
+                    }catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        pct.Reset();
+                        rtbTesting.Clear();
+                        rtbTraining.Clear();
+                        for (int i = 0; i < 6; i++)
+                        {
+                            lblGambarPattern[i].Text = "";
+                        }
+                        modeInputPattern();
+                    }
                 }
-            }
+            //}
             modeTestTrain();
         }
 
