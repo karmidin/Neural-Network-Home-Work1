@@ -31,7 +31,7 @@ namespace JST
         {
             int countEpoch = 1;
             bool belajar = true;
-            hasilTraining.Append("Hasil Training Yoo\n");
+            hasilTraining.Append("Hasil Training Yoos\n");
             printExcel+="Hasil Training\n";
             while (isLearn())
             {
